@@ -28,6 +28,12 @@ for (const variable of BLOCKCHAIN_ENV) {
   }
 }
 
+// 🔒 VALIDACIÓN DE ORIGEN FRONTEND
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
+if (!FRONTEND_ORIGIN) {
+  logger.error('FRONTEND_ORIGIN no está configurado. CORS será restrictivo.');
+}
+
 // --- Blockchain Configuration (Base Sepolia for testing) ---
 let provider, wallet, nftContract;
 const RPC_URL = process.env.RPC_URL || 'https://sepolia.base.org';
@@ -57,32 +63,72 @@ if (PRIVATE_KEY && NFT_CONTRACT_ADDRESS) {
   logger.warn('NFT minting deshabilitado - falta configuración blockchain');
 }
 
+// 🔒 CORS SEGURO
 app.use(cors({
-  // Disallow '*' in production. Fail-safe by not setting a default.
-  // The request will be blocked by CORS if the origin is not on the allow-list.
-  origin: process.env.FRONTEND_ORIGIN
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // 🔒 VALIDAR ORIGIN CONFIGURADO
+    if (FRONTEND_ORIGIN && origin === FRONTEND_ORIGIN) {
+      return callback(null, true);
+    }
+    
+    // 🔒 PERMITIR SOLO EN DESARROLLO
+    if (process.env.NODE_ENV === 'development') {
+      logger.warn(`CORS permitiendo origin no autorizado en desarrollo: ${origin}`);
+      return callback(null, true);
+    }
+    
+    // 🔒 BLOQUEAR EN PRODUCCIÓN
+    logger.warn(`CORS bloqueando origin no autorizado: ${origin}`);
+    return callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: false, // 🔒 NO PERMITIR CREDENCIALES
+  methods: ['GET', 'POST'], // 🔒 LIMITAR MÉTODOS
+  allowedHeaders: ['Content-Type', 'Authorization'], // 🔒 LIMITAR HEADERS
+  maxAge: 86400 // 🔒 CACHE CORS POR 24 HORAS
 }));
 
 // --- Core Middleware ---
 app.use(pinoHttp({ logger })); // Add structured request logging
-app.use(express.json({ limit: '20kb' }));
+app.use(express.json({ limit: '10kb' })); // 🔒 REDUCIR LÍMITE DE JSON
 
-
-// Rate limiting simple
-// For production, consider a more robust library like 'express-rate-limit'
-const rateLimitWindowMs = 60 * 1000;
-// Use environment variable for max requests, with a sensible default.
-const rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX, 10) || 60;
+// 🔒 RATE LIMITING MEJORADO
+const rateLimitWindowMs = 60 * 1000; // 1 minuto
+const rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX, 10) || 30; // 🔒 REDUCIR A 30 REQUEST/MIN
 const ipCounters = new Map();
-setInterval(() => ipCounters.clear(), rateLimitWindowMs);
+const ipBlocklist = new Set(); // 🔒 LISTA NEGRA PARA IPs MALICIOSAS
+
+setInterval(() => {
+  ipCounters.clear();
+  // 🔒 LIMPIAR LISTA NEGRA CADA 10 MINUTOS
+  if (Math.random() < 0.1) { // 10% chance cada minuto
+    ipBlocklist.clear();
+  }
+}, rateLimitWindowMs);
 
 function ipRateLimit(req, res, next) {
-  const ip = req.ip || req.connection.remoteAddress;
+  const ip = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'];
+  
+  // 🔒 VERIFICAR LISTA NEGRA
+  if (ipBlocklist.has(ip)) {
+    logger.warn(`IP bloqueada intentando acceder: ${ip}`);
+    return res.status(403).json({ error: 'Access denied' });
+  }
+  
   const c = ipCounters.get(ip) || 0;
-  if (c > rateLimitMax) return res.status(429).json({ error: 'Too many requests' });
+  if (c > rateLimitMax) {
+    // 🔒 AÑADIR A LISTA NEGRA SI EXCEDE LÍMITE
+    ipBlocklist.add(ip);
+    logger.warn(`IP añadida a lista negra por exceder rate limit: ${ip}`);
+    return res.status(429).json({ error: 'Too many requests' });
+  }
+  
   ipCounters.set(ip, c + 1);
   next();
 }
+
 app.use(ipRateLimit);
 
 // DB (SQLite simple)
