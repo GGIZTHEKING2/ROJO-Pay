@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔴 ROJO Pay Biometric - Rebel Biometric Payments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --rojo-red: #DC2626;
+            --rojo-dark: #991B1B;
+            --rojo-black: #000000;
+            --rojo-gray: #111827;
+            --rojo-light: #F9FAFB;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--rojo-black) 0%, var(--rojo-dark) 50%, var(--rojo-red) 100%);
+            min-height: 100vh;
+        }
+        
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .animate-fade-in { 
+            animation: fadeIn 0.6s ease-out forwards; 
+        }
+        
+        .animate-pulse-red {
+            animation: pulseRed 2s infinite;
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .biometric-scan {
+            animation: biometricScan 3s ease-in-out infinite;
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--rojo-red); }
+            to { text-shadow: 0 0 20px var(--rojo-red), 0 0 30px var(--rojo-red); }
+        }
+        
+        @keyframes biometricScan {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
+            }
+        }
+        
+        .rebel-card {
+            background: linear-gradient(145deg, rgba(0,0,0,0.9), rgba(17,24,39,0.9));
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--rojo-red);
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+        }
+        
+        .biometric-button {
+            background: linear-gradient(45deg, var(--rojo-red), var(--rojo-dark));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .biometric-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.4);
+        }
+        
+        .biometric-button:active {
+            transform: translateY(0);
+        }
+        
+        .fingerprint-icon {
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--rojo-red);
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .fingerprint-icon::before {
+            content: "👆";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-pending { background-color: #FFA500; }
+        .status-success { background-color: #10B981; }
+        .status-error { background-color: #EF4444; }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+
+<body class="text-white flex items-center justify-center min-h-screen p-4">
+    
+    <!-- Partículas de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-4 -left-4 w-72 h-72 bg-red-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-20 right-0 w-72 h-72 bg-red-800 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+        <div class="absolute bottom-0 left-20 w-72 h-72 bg-red-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-2000"></div>
+    </div>
+
+    <div class="relative w-full max-w-md mx-auto rebel-card rounded-2xl animate-fade-in">
+        
+        <!-- Cabecera con Logo -->
+        <div class="p-8 border-b border-red-600/30 text-center">
+            <div class="floating">
+                <img src="rojo-logo.png" alt="ROJO Logo" class="mx-auto mb-6 h-24 w-auto animate-pulse-red"> 
+            </div>
+            <h1 class="text-3xl font-black uppercase tracking-wider text-red-500 orbitron animate-glow">
+                ROJO Pay
+            </h1>
+            <h2 class="text-lg font-bold text-red-400 mt-2">
+                🔬 BIOMETRIC
+            </h2>
+            <p class="mt-3 text-sm text-gray-300 font-medium">
+                💀 Paga con huella dactilar. Sin wallets, sin complicaciones 🔥
+            </p>
+            <div class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold">
+                🚀 PRIMERA PLATAFORMA BIOMÉTRICA ONCHAIN
+            </div>
+        </div>
+
+        <!-- Sección de Registro/Login Biométrico -->
+        <div id="biometric-section" class="p-8">
+            
+            <!-- Estado de WebAuthn -->
+            <div id="webauthn-status" class="mb-6 p-4 rounded-lg bg-gray-800 border border-gray-600">
+                <h3 class="text-sm font-bold text-gray-300 mb-2">🔍 Estado del Sistema:</h3>
+                <div id="webauthn-support" class="flex items-center text-sm">
+                    <span class="status-indicator status-pending"></span>
+                    <span>Verificando soporte WebAuthn...</span>
+                </div>
+                <div id="biometric-support" class="flex items-center text-sm mt-1">
+                    <span class="status-indicator status-pending"></span>
+                    <span>Verificando biometría...</span>
+                </div>
+            </div>
+
+            <!-- Registro Biométrico -->
+            <div id="register-section" class="space-y-6">
+                <div class="text-center">
+                    <div class="fingerprint-icon biometric-scan mx-auto mb-4"></div>
+                    <h3 class="text-xl font-bold text-red-400 mb-2">
+                        Registro Biométrico
+                    </h3>
+                    <p class="text-sm text-gray-400 mb-6">
+                        Registra tu huella dactilar o Face ID para pagos súper seguros
+                    </p>
+                </div>
+                
+                <div class="space-y-4">
+                    <input 
+                        type="text" 
+                        id="device-name" 
+                        placeholder="Nombre de tu dispositivo (ej: iPhone 15 Pro)"
+                        class="w-full bg-gray-800 border-2 border-gray-600 text-white rounded-xl p-4 font-medium focus:border-red-500 focus:outline-none"
+                        maxlength="50"
+                    >
+                    
+                    <button 
+                        id="register-biometric-btn"
+                        class="w-full biometric-button text-white font-black py-4 px-6 rounded-xl orbitron text-lg"
+                    >
+                        🔐 REGISTRAR BIOMETRÍA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección de Pago -->
+            <div id="payment-section" class="space-y-6" style="display: none;">
+                <div class="text-center">
+                    <div class="fingerprint-icon mx-auto mb-4"></div>
+                    <h3 class="text-xl font-bold text-green-400 mb-2">
+                        ✅ Biometría Registrada
+                    </h3>
+                    <p class="text-sm text-gray-400 mb-6">
+                        Ahora puedes pagar con tu huella dactilar
+                    </p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-red-400 mb-2">
+                            💰 Monto a Pagar
+                        </label>
+                        <input 
+                            type="number" 
+                            id="payment-amount" 
+                            placeholder="10.00"
+                            step="0.01"
+                            min="0.01"
+                            class="w-full bg-gray-800 border-2 border-gray-600 text-white rounded-xl p-4 font-medium focus:border-red-500 focus:outline-none text-center text-2xl"
+                        >
+                    </div>
+                    
+                    <button 
+                        id="pay-biometric-btn"
+                        class="w-full biometric-button text-white font-black py-4 px-6 rounded-xl orbitron text-lg"
+                    >
+                        👆 PAGAR CON BIOMETRÍA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultado del Pago -->
+            <div id="payment-result" class="text-center" style="display: none;">
+                <div class="animate-fade-in">
+                    <h2 class="text-2xl font-black text-green-500 mb-4 orbitron animate-glow">
+                        🎉 ¡PAGO BIOMÉTRICO EXITOSO! 🎉
+                    </h2>
+                    
+                    <div class="bg-gray-900 rounded-xl p-6 mb-6 border border-green-600/30">
+                        <p class="text-sm text-gray-300 mb-4">
+                            💎 NFT Receipt minteado automáticamente en Base ⚡
+                        </p>
+                        
+                        <div id="nft-info" class="space-y-2 text-left">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Token ID:</span>
+                                <span id="token-id" class="text-green-400 font-mono">#---</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Método:</span>
+                                <span id="biometric-method" class="text-red-400">Huella Dactilar</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Monto:</span>
+                                <span id="payment-amount-result" class="text-white font-bold">$---.--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        id="new-payment-btn"
+                        class="text-red-400 hover:text-red-300 font-medium underline transition-colors duration-300"
+                    >
+                        ← Realizar Nuevo Pago
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-red-600/30 text-center">
+            <p class="text-xs text-gray-500">
+                🔴 ROJO Pay Biometric - Powered by WebAuthn & Base L2
+            </p>
+            <a href="index.html" class="text-xs text-red-400 hover:text-red-300 underline">
+                ← Volver a pagos tradicionales
+            </a>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔴 ROJO Pay Biometric iniciando... ¡Primera plataforma biométrica onchain! 🚀');
+        
+        // Estado global
+        let isRegistered = false;
+        let currentChallenge = null;
+        
+        // Referencias DOM
+        const webauthnSupportEl = document.getElementById('webauthn-support');
+        const biometricSupportEl = document.getElementById('biometric-support');
+        const registerSection = document.getElementById('register-section');
+        const paymentSection = document.getElementById('payment-section');
+        const paymentResult = document.getElementById('payment-result');
+        const registerBtn = document.getElementById('register-biometric-btn');
+        const payBtn = document.getElementById('pay-biometric-btn');
+        const newPaymentBtn = document.getElementById('new-payment-btn');
+
+        // Verificar soporte WebAuthn
+        function checkWebAuthnSupport() {
+            if (window.PublicKeyCredential) {
+                webauthnSupportEl.innerHTML = '<span class="status-indicator status-success"></span><span>✅ WebAuthn soportado</span>';
+                
+                // Verificar soporte biométrico
+                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+                    .then(available => {
+                        if (available) {
+                            biometricSupportEl.innerHTML = '<span class="status-indicator status-success"></span><span>✅ Biometría disponible</span>';
+                        } else {
+                            biometricSupportEl.innerHTML = '<span class="status-indicator status-error"></span><span>❌ Biometría no disponible</span>';
+                        }
+                    });
+            } else {
+                webauthnSupportEl.innerHTML = '<span class="status-indicator status-error"></span><span>❌ WebAuthn no soportado</span>';
+                biometricSupportEl.innerHTML = '<span class="status-indicator status-error"></span><span>❌ Navegador no compatible</span>';
+            }
+        }
+
+        // Registrar biometría
+        async function registerBiometric() {
+            const deviceName = document.getElementById('device-name').value.trim();
+            if (!deviceName) {
+                alert('Por favor ingresa el nombre de tu dispositivo');
+                return;
+            }
+
+            registerBtn.innerHTML = '🔄 Registrando...';
+            registerBtn.disabled = true;
+
+            try {
+                // Simular registro WebAuthn
+                console.log('Iniciando registro biométrico...');
+                
+                // En una implementación real, aquí iría:
+                // 1. Generar challenge del servidor
+                // 2. navigator.credentials.create() con WebAuthn
+                // 3. Enviar credencial al servidor
+                // 4. Registrar en el contrato
+                
+                // Por ahora, simulamos el proceso
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simular éxito
+                isRegistered = true;
+                registerSection.style.display = 'none';
+                paymentSection.style.display = 'block';
+                
+                console.log('✅ Biometría registrada exitosamente');
+                
+            } catch (error) {
+                console.error('Error registrando biometría:', error);
+                alert('Error al registrar biometría. Inténtalo de nuevo.');
+            } finally {
+                registerBtn.innerHTML = '🔐 REGISTRAR BIOMETRÍA';
+                registerBtn.disabled = false;
+            }
+        }
+
+        // Pagar con biometría
+        async function payWithBiometric() {
+            const amount = document.getElementById('payment-amount').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Ingresa un monto válido');
+                return;
+            }
+
+            payBtn.innerHTML = '👆 Escaneando...';
+            payBtn.disabled = true;
+
+            try {
+                console.log('Iniciando pago biométrico...');
+                
+                // En una implementación real:
+                // 1. Generar challenge del servidor
+                // 2. navigator.credentials.get() con WebAuthn
+                // 3. Verificar biometría
+                // 4. Procesar pago en contrato
+                // 5. Mint NFT automáticamente
+                
+                // Simular proceso biométrico
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Simular éxito
+                const tokenId = Math.floor(Math.random() * 1000) + 1;
+                
+                document.getElementById('token-id').textContent = `#${tokenId}`;
+                document.getElementById('payment-amount-result').textContent = `$${amount}`;
+                
+                paymentSection.style.display = 'none';
+                paymentResult.style.display = 'block';
+                
+                console.log('✅ Pago biométrico exitoso - NFT minteado!');
+                
+            } catch (error) {
+                console.error('Error en pago biométrico:', error);
+                alert('Error procesando pago. Inténtalo de nuevo.');
+            } finally {
+                payBtn.innerHTML = '👆 PAGAR CON BIOMETRÍA';
+                payBtn.disabled = false;
+            }
+        }
+
+        // Nuevo pago
+        function newPayment() {
+            paymentResult.style.display = 'none';
+            paymentSection.style.display = 'block';
+            document.getElementById('payment-amount').value = '';
+        }
+
+        // Event listeners
+        registerBtn.addEventListener('click', registerBiometric);
+        payBtn.addEventListener('click', payWithBiometric);
+        newPaymentBtn.addEventListener('click', newPayment);
+
+        // Inicializar
+        checkWebAuthnSupport();
+        
+        console.log('💀 ROJO Pay Biometric listo para revolucionar los pagos! 🔴🚀');
+    </script>
+</body>
+</html>
